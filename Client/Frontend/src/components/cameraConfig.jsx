@@ -7,6 +7,7 @@ const CameraConfig = () => {
   const [brightnessLevel, setBrightnessLevel] = useState(50); // Default brightness level
   const [cameras, setCameras] = useState([]); // State to store cameras
   const [selectedCameraID, setSelectedCameraID] = useState(""); // Track selected camera
+  const [selectedCameraID, setSelectedCameraID] = useState(""); // Track selected camera
 
   // Fetch the confidence threshold for the selected camera
   // // const fetchConfidenceThreshold = async (cameraId) => {
@@ -16,6 +17,13 @@ const CameraConfig = () => {
   // //     );
   // //     const data = await response.json();
 
+  //     if (data.confidence_threshold) {
+  //       setConfidenceLevel(data.confidence_threshold * 100);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching confidence threshold:", error);
+  //   }
+  // };
   //     if (data.confidence_threshold) {
   //       setConfidenceLevel(data.confidence_threshold * 100);
   //     }
@@ -55,15 +63,19 @@ const CameraConfig = () => {
         },);
         const data = await response.json();
         console.log(data);
+        console.log(data);
         const allCameras = data.map((camera) => ({
           id: camera.id,
           location: camera.location,
+          condidence_threshold: camera.confidence_threshold,
           condidence_threshold: camera.confidence_threshold,
         }));
         setCameras(allCameras);
 
         // Set the first camera as the default selection
         if (allCameras.length > 0) {
+          setSelectedCameraID(allCameras[0].id);
+          setConfidenceLevel(allCameras[0].condidence_threshold * 100);
           setSelectedCameraID(allCameras[0].id);
           setConfidenceLevel(allCameras[0].condidence_threshold * 100);
           fetchBrightnessLevel(allCameras[0].id);
@@ -82,6 +94,7 @@ const CameraConfig = () => {
       const token = localStorage.getItem("accessToken");
       const response = await fetch(
         `${externalURL}/cameras/${selectedCameraID}/confidence`,
+        `${externalURL}/cameras/${selectedCameraID}/confidence`,
         {
           method: "PUT",
           headers: {
@@ -97,6 +110,9 @@ const CameraConfig = () => {
       if (!response.ok) {
         throw new Error("Failed to update confidence level");
       }
+      cameras.filter(
+        (camera) => camera.id === selectedCameraID,
+      )[0].condidence_threshold = confidenceLevel / 100;
       cameras.filter(
         (camera) => camera.id === selectedCameraID,
       )[0].condidence_threshold = confidenceLevel / 100;
@@ -117,6 +133,7 @@ const CameraConfig = () => {
         },
         body: JSON.stringify({
           camera_id: selectedCameraID,
+          camera_id: selectedCameraID,
           new_brightness: parseInt(brightnessLevel, 10),
         }),
       });
@@ -134,6 +151,11 @@ const CameraConfig = () => {
   // Handle camera selection change and fetch corresponding confidence level
   const handleCameraChange = (e) => {
     const cameraId = e.target.value;
+    setSelectedCameraID(cameraId);
+    setConfidenceLevel(
+      cameras.filter((camera) => camera.id === cameraId)[0]
+        .condidence_threshold * 100,
+    );
     setSelectedCameraID(cameraId);
     setConfidenceLevel(
       cameras.filter((camera) => camera.id === cameraId)[0]
@@ -158,6 +180,7 @@ const CameraConfig = () => {
         </label>
         <select
           id="location"
+          value={selectedCameraID}
           value={selectedCameraID}
           onChange={handleCameraChange}
           className="w-full p-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-NavyBlue focus:outline-none bg-white"
@@ -229,6 +252,7 @@ const CameraConfig = () => {
       {/* Scheduler */}
       <div className="space-y-4 p-6 border border-gray-300 bg-BG rounded-lg">
         <h3 className="text-lg font-medium text-gray-700">Schedule Cameras</h3>
+        <Scheduler cameraId={selectedCameraID} />
         <Scheduler cameraId={selectedCameraID} />
       </div>
     </div>
