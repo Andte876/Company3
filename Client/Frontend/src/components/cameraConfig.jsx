@@ -9,12 +9,12 @@ const CameraConfig = () => {
   const [selectedCameraID, setSelectedCameraID] = useState(""); // Track selected camera
 
   // Fetch the confidence threshold for the selected camera
-  // const fetchConfidenceThreshold = async (cameraId) => {
-  //   try {
-  //     const response = await fetch(
-  //       `${externalURL}/cameras/${cameraId}/confidence`,
-  //     );
-  //     const data = await response.json();
+  // // const fetchConfidenceThreshold = async (cameraId) => {
+  // //   try {
+  // //     const response = await fetch(
+  // //       `${externalURL}/cameras/${cameraId}/confidence`,
+  // //     );
+  // //     const data = await response.json();
 
   //     if (data.confidence_threshold) {
   //       setConfidenceLevel(data.confidence_threshold * 100);
@@ -50,9 +50,9 @@ const CameraConfig = () => {
     // Fetch the list of cameras to get their locations
     const fetchCameras = async () => {
       try {
-        const response = await fetch(`${externalURL}/cameras`, {
+        const response = await fetch(`${externalURL}/cameras/`, {
           method: "GET",
-        });
+        },);
         const data = await response.json();
         console.log(data);
         const allCameras = data.map((camera) => ({
