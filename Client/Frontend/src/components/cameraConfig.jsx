@@ -7,7 +7,6 @@ const CameraConfig = () => {
   const [brightnessLevel, setBrightnessLevel] = useState(50); // Default brightness level
   const [cameras, setCameras] = useState([]); // State to store cameras
   const [selectedCameraID, setSelectedCameraID] = useState(""); // Track selected camera
-  const [selectedCameraID, setSelectedCameraID] = useState(""); // Track selected camera
 
   // Fetch the confidence threshold for the selected camera
   // // const fetchConfidenceThreshold = async (cameraId) => {
@@ -60,7 +59,7 @@ const CameraConfig = () => {
       try {
         const response = await fetch(`${externalURL}/cameras/`, {
           method: "GET",
-        },);
+        });
         const data = await response.json();
         console.log(data);
         console.log(data);
@@ -68,14 +67,11 @@ const CameraConfig = () => {
           id: camera.id,
           location: camera.location,
           condidence_threshold: camera.confidence_threshold,
-          condidence_threshold: camera.confidence_threshold,
         }));
         setCameras(allCameras);
 
         // Set the first camera as the default selection
         if (allCameras.length > 0) {
-          setSelectedCameraID(allCameras[0].id);
-          setConfidenceLevel(allCameras[0].condidence_threshold * 100);
           setSelectedCameraID(allCameras[0].id);
           setConfidenceLevel(allCameras[0].condidence_threshold * 100);
           fetchBrightnessLevel(allCameras[0].id);
@@ -113,9 +109,6 @@ const CameraConfig = () => {
       cameras.filter(
         (camera) => camera.id === selectedCameraID,
       )[0].condidence_threshold = confidenceLevel / 100;
-      cameras.filter(
-        (camera) => camera.id === selectedCameraID,
-      )[0].condidence_threshold = confidenceLevel / 100;
       alert("Confidence level updated successfully");
     } catch (error) {
       console.error("Error updating confidence level:", error);
@@ -132,7 +125,6 @@ const CameraConfig = () => {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({
-          camera_id: selectedCameraID,
           camera_id: selectedCameraID,
           new_brightness: parseInt(brightnessLevel, 10),
         }),
@@ -151,11 +143,6 @@ const CameraConfig = () => {
   // Handle camera selection change and fetch corresponding confidence level
   const handleCameraChange = (e) => {
     const cameraId = e.target.value;
-    setSelectedCameraID(cameraId);
-    setConfidenceLevel(
-      cameras.filter((camera) => camera.id === cameraId)[0]
-        .condidence_threshold * 100,
-    );
     setSelectedCameraID(cameraId);
     setConfidenceLevel(
       cameras.filter((camera) => camera.id === cameraId)[0]
@@ -180,7 +167,6 @@ const CameraConfig = () => {
         </label>
         <select
           id="location"
-          value={selectedCameraID}
           value={selectedCameraID}
           onChange={handleCameraChange}
           className="w-full p-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-NavyBlue focus:outline-none bg-white"
